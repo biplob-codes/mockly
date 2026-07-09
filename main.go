@@ -12,6 +12,7 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /", handlers.Home)
 	mux.HandleFunc("GET /health", handlers.Health)
 
 	mux.HandleFunc("GET /users", handlers.GetAllUsers)

@@ -1,10 +1,9 @@
 package handlers
 
-import (
-	"fmt"
-	"net/http"
-)
+import "net/http"
 
 func Health(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "The server is healthy.")
+	writeRes(w, http.StatusOK, map[string]any{
+		"status": "healthy",
+	})
 }
