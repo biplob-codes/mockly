@@ -12,8 +12,8 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /health",handlers.Health)
-	
+	mux.HandleFunc("GET /health", handlers.Health)
+
 	mux.HandleFunc("GET /users", handlers.GetAllUsers)
 	mux.HandleFunc("GET /users/{id}", handlers.GetUserById)
 	mux.HandleFunc("POST /users", handlers.CreateUser)
@@ -43,23 +43,22 @@ func main() {
 	mux.HandleFunc("POST /comments", handlers.CreateComment)
 	mux.HandleFunc("PUT /comments/{id}", handlers.UpdateComment)
 	mux.HandleFunc("DELETE /comments/{id}", handlers.DeleteComment)
-	
-    port:=os.Getenv("PORT")
-	if port==""{
-		port="8080"
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
-	addr:=":"+port
-	srv:=&http.Server{
-		Addr: addr,
-		Handler: mux,
-		ReadHeaderTimeout: 5*time.Second,
-		ReadTimeout: 10*time.Second,
-		WriteTimeout: 10*time.Second,
+	addr := ":" + port
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           mux,
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
 	}
-	fmt.Println("Listening on port",port)
-	if err:=srv.ListenAndServe();err!=nil{
+	fmt.Println("Listening on port", port)
+	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
 
-	
 }

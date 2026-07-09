@@ -50,11 +50,11 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	createdComment := model.Comment{
-		Id:     len(store.Comments) + 1,
-		PostId: req.PostId,
-		Name:   req.Name,
-		Email:  req.Email,
-		Body:   req.Body,
+		Id:        len(store.Comments) + 1,
+		PostId:    req.PostId,
+		Name:      req.Name,
+		Email:     req.Email,
+		Body:      req.Body,
 		CreatedAt: time.Now().UTC().Format(time.RFC3339),
 	}
 	writeRes(w, http.StatusCreated, createdComment)

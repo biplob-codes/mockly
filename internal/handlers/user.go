@@ -54,15 +54,15 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	createdUser := model.User{
-		Id:       len(store.Users) + 1,
-		Name:     req.Name,
-		Username: req.Username,
-		Email:    req.Email,
-		Phone:    req.Phone,
-		Website:  req.Website,
-		Avatar:   req.Avatar,
-		Address:  req.Address,
-		Company:  req.Company,
+		Id:        len(store.Users) + 1,
+		Name:      req.Name,
+		Username:  req.Username,
+		Email:     req.Email,
+		Phone:     req.Phone,
+		Website:   req.Website,
+		Avatar:    req.Avatar,
+		Address:   req.Address,
+		Company:   req.Company,
 		CreatedAt: time.Now().UTC().Format(time.RFC3339),
 	}
 	writeRes(w, http.StatusCreated, createdUser)

@@ -28,13 +28,13 @@ type User struct {
 }
 
 type NewUser struct {
-	Name     string  `json:"name"`
-	Username string  `json:"username"`
-	Email    string  `json:"email"`
-	Phone    string  `json:"phone"`
-	Website  string  `json:"website"`
-	Avatar   string  `json:"avatar"`
-	Address  Address `json:"address"`
-	Company  Company `json:"company"`
-		CreatedAt string  `json:"createdAt"`
+	Name      string  `json:"name"`
+	Username  string  `json:"username"`
+	Email     string  `json:"email"`
+	Phone     string  `json:"phone"`
+	Website   string  `json:"website"`
+	Avatar    string  `json:"avatar"`
+	Address   Address `json:"address"`
+	Company   Company `json:"company"`
+	CreatedAt string  `json:"createdAt"`
 }

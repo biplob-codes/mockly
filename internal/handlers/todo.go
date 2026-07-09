@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
- 
 
 	"github.com/biplob-codes/mockly/internal/model"
 	"github.com/biplob-codes/mockly/internal/store"
@@ -56,7 +55,7 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 		Completed: req.Completed,
 		Priority:  req.Priority,
 		DueDate:   req.DueDate,
- 	}
+	}
 	writeRes(w, http.StatusCreated, createdTodo)
 }
 

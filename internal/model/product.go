@@ -20,6 +20,5 @@ type NewProduct struct {
 	Sku         string  `json:"sku"`
 	Rating      float64 `json:"rating"`
 	InStock     bool    `json:"inStock"`
-		CreatedAt   string  `json:"createdAt"`
-
+	CreatedAt   string  `json:"createdAt"`
 }

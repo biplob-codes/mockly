@@ -58,7 +58,7 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		Sku:         req.Sku,
 		Rating:      req.Rating,
 		InStock:     req.InStock,
-		CreatedAt: time.Now().UTC().Format(time.RFC3339),
+		CreatedAt:   time.Now().UTC().Format(time.RFC3339),
 	}
 	writeRes(w, http.StatusCreated, createdProduct)
 }

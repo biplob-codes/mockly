@@ -50,12 +50,12 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	createdPost := model.Post{
-		Id:     len(store.Posts) + 1,
-		UserId: req.UserId,
-		Title:  req.Title,
-		Body:   req.Body,
-		Tags:   req.Tags,
-		Views:  0,
+		Id:        len(store.Posts) + 1,
+		UserId:    req.UserId,
+		Title:     req.Title,
+		Body:      req.Body,
+		Tags:      req.Tags,
+		Views:     0,
 		CreatedAt: time.Now().UTC().Format(time.RFC3339),
 	}
 	writeRes(w, http.StatusCreated, createdPost)

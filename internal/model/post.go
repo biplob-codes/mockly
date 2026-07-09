@@ -11,10 +11,9 @@ type Post struct {
 }
 
 type NewPost struct {
-	UserId int      `json:"userId"`
-	Title  string   `json:"title"`
-	Body   string   `json:"body"`
-	Tags   []string `json:"tags"`
-		CreatedAt string   `json:"createdAt"`
-
+	UserId    int      `json:"userId"`
+	Title     string   `json:"title"`
+	Body      string   `json:"body"`
+	Tags      []string `json:"tags"`
+	CreatedAt string   `json:"createdAt"`
 }

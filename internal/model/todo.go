@@ -1,6 +1,5 @@
 package model
 
-
 type Todo struct {
 	Id        int    `json:"id"`
 	UserId    int    `json:"userId"`
