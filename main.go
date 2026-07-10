@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/biplob-codes/mockly/internal/database"
 	"github.com/biplob-codes/mockly/internal/handlers"
 )
 
@@ -57,6 +58,12 @@ func main() {
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
 	}
+	db,err:=database.Connect()
+	if err!=nil{
+		fmt.Println(err)
+	}
+	defer db.Close()
+	fmt.Println("Database connection successfull")
 	fmt.Println("Listening on port", port)
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)

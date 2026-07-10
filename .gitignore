@@ -1,0 +1,19 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+dist/
+# Output of go coverage tool
+*.out
+
+# Go workspace file
+go.work
+
+# Env files
+.env
+*.db
