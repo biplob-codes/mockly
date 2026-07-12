@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/biplob-codes/mockly/internal/database"
+	"github.com/biplob-codes/mockly/internal/database/sqlc"
 	"github.com/biplob-codes/mockly/internal/handlers"
 )
 
@@ -58,12 +60,27 @@ func main() {
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
 	}
-	db,err:=database.Connect()
-	if err!=nil{
+	db, err := database.Connect()
+	if err != nil {
 		fmt.Println(err)
 	}
 	defer db.Close()
 	fmt.Println("Database connection successfull")
+	if _, err := db.Exec(database.Schema); err != nil {
+		log.Fatal(err)
+	}
+	queries := sqlc.New(db)
+	ctx := context.Background()
+	user, err := queries.CreateUser(ctx, sqlc.CreateUserParams{Username: "naruto", FullName: "Naruto Uzumaki", Email: "naruto@konoha.leaf"})
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Created: ", user)
+	fetched, err := queries.GetUser(ctx, user.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Fetched:", fetched)
 	fmt.Println("Listening on port", port)
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
