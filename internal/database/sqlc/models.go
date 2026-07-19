@@ -22,6 +22,16 @@ type Character struct {
 	UpdatedAt time.Time
 }
 
+type Jutsu struct {
+	ID          int64
+	Name        string
+	Description sql.NullString
+	Type        string
+	Rank        string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
 type Village struct {
 	ID          int64
 	Name        string
