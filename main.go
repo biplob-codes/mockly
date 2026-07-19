@@ -31,6 +31,7 @@ func main() {
 	queries:=sqlc.New(db)
         villageStore=store.CreateDBVillageStore(queries)
         characterStore=store.CreateDBCharacterStore(queries)
+		jutsuStore=store.CreateDBJutsuStore(queries)
 	}else{
 		villageStore=store.CreateMemoryVillageStore()
 		characterStore=store.CreateMemoryCharacterStore()

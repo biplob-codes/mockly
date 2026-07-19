@@ -28,6 +28,7 @@ func (h *JutsuHandler) ListJutsus(w http.ResponseWriter, r *http.Request) {
 	jutsus, err := h.store.List(r.Context())
 	if err != nil {
 		writeRes(w, http.StatusInternalServerError, "Something went wrong")
+		return
 	}
 	writeRes(w, http.StatusOK, jutsus)
 }
@@ -81,6 +82,7 @@ func (h *JutsuHandler) DeleteJutsu(w http.ResponseWriter, r *http.Request) {
 	jutsu, err := h.store.Delete(r.Context(), int64(n))
 	if err != nil {
 		writeRes(w, http.StatusInternalServerError, err)
+		return
 	}
 	writeRes(w, http.StatusOK, jutsu)
 }
