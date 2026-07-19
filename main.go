@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
+
 	"time"
 
+	"github.com/biplob-codes/mockly/internal/config"
 	"github.com/biplob-codes/mockly/internal/database"
 	"github.com/biplob-codes/mockly/internal/database/sqlc"
 	"github.com/biplob-codes/mockly/internal/handlers"
@@ -15,25 +16,26 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
-	db, err := database.Connect()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer db.Close()
-    
-
-	mux.HandleFunc("GET /", handlers.Home)
-	mux.HandleFunc("GET /health", handlers.Health)
-    app_env:="binary"
-
 	var villageStore store.VillageStore
-	if app_env=="binary"{
-		queries:=sqlc.New(db)
+	cfg:=config.Load()
+	if cfg.Env=="local"{
+    db, err := database.Connect(cfg.DatabaseName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	fmt.Println("Database connection successfull")
+	defer db.Close()
+	queries:=sqlc.New(db)
         villageStore=store.CreateDBVillageStore(queries)
 	}else{
-
 		villageStore=store.CreateMemoryVillageStore()
 	}
+	
+ 
+	mux.HandleFunc("GET /", handlers.Home)
+	mux.HandleFunc("GET /health", handlers.Health)
+   
 	villageHandler:=handlers.NewVillageHandler(villageStore)
 
     mux.HandleFunc("GET /villages", villageHandler.ListVillages)
@@ -43,11 +45,7 @@ func main() {
 	 
  
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	addr := ":" + port
+	addr := ":" + cfg.Port
 	srv := &http.Server{
 		Addr:              addr,
 		Handler:           mux,
@@ -57,8 +55,7 @@ func main() {
 	}
 
 
-	fmt.Println("Database connection successfull")
-	fmt.Println("Listening on port", port)
+	fmt.Println("Listening on port",cfg.Port)
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}

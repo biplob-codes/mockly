@@ -9,8 +9,9 @@ import (
 
 
 
-func Connect() (*sql.DB, error) {
-	db, err := sql.Open("sqlite", "mockly.db")
+func Connect(path string) (*sql.DB, error) {
+	dbPath:=path+"?_pragma=foreign_keys(1)"
+	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("database connection failed: %w", err)
 	}

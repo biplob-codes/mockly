@@ -9,10 +9,10 @@ migrate-new:
 	migrate create -ext sql -dir $(MIGRATION_DIR) -seq $(name)
 
 migrate-up:
-	migrate -path $(MIGRATION_DIR) -database "sqlite3://$(DB_PATH)" up
+	migrate -path $(MIGRATION_DIR) -database "sqlite3://$(DATABASE_NAME)" up
 
 migrate-down:
-	migrate -path $(MIGRATION_DIR) -database "sqlite3://$(DB_PATH)" down
+	migrate -path $(MIGRATION_DIR) -database "sqlite3://$(DATABASE_NAME)" down
 
 sqlc-gen:
 	sqlc generate
