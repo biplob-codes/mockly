@@ -6,19 +6,34 @@ import (
 	"net/http"
 	"os"
 	"time"
+
 	"github.com/biplob-codes/mockly/internal/database"
+	"github.com/biplob-codes/mockly/internal/database/sqlc"
 	"github.com/biplob-codes/mockly/internal/handlers"
 	"github.com/biplob-codes/mockly/internal/store"
 )
 
 func main() {
 	mux := http.NewServeMux()
+	db, err := database.Connect()
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer db.Close()
+    
+
 	mux.HandleFunc("GET /", handlers.Home)
 	mux.HandleFunc("GET /health", handlers.Health)
-
+    app_env:="binary"
 
 	var villageStore store.VillageStore
-	villageStore=store.CreateMemoryVillageStore()
+	if app_env=="binary"{
+		queries:=sqlc.New(db)
+        villageStore=store.CreateDBVillageStore(queries)
+	}else{
+
+		villageStore=store.CreateMemoryVillageStore()
+	}
 	villageHandler:=handlers.NewVillageHandler(villageStore)
 
     mux.HandleFunc("GET /villages", villageHandler.ListVillages)
@@ -40,11 +55,7 @@ func main() {
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      10 * time.Second,
 	}
-	db, err := database.Connect()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer db.Close()
+
 
 	fmt.Println("Database connection successfull")
 	fmt.Println("Listening on port", port)

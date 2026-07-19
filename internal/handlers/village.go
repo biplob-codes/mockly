@@ -28,7 +28,7 @@ func NewVillageHandler(s store.VillageStore) *VillageHandler{
 }
 
 func (h *VillageHandler) ListVillages(w http.ResponseWriter, r *http.Request) {
-	villages,err:=h.store.List()
+	villages,err:=h.store.List(r.Context())
 
 	if err!=nil{
 		writeRes(w,http.StatusInternalServerError,"Something went wrong")
@@ -43,7 +43,7 @@ func (h *VillageHandler) GetVillage(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusBadRequest, "Invalid number")
 		return
 	}
-	village,err:=h.store.Get(int64(n))
+	village,err:=h.store.Get(r.Context(),int64(n))
 
 	if err!=nil{
      writeRes(w,http.StatusNotFound,err.Error())
@@ -79,7 +79,7 @@ func (h *VillageHandler) CreateVillage(w http.ResponseWriter, r *http.Request) {
 	if req.KageID != nil {
 		villageParams.KageID = sql.NullInt64{Int64: *req.KageID, Valid: true}
 	}
-	newVillage,err:=h.store.Create(villageParams)
+	newVillage,err:=h.store.Create(r.Context(),villageParams)
 
 	if err!=nil{
 		writeRes(w, http.StatusInternalServerError, err.Error())
@@ -96,7 +96,7 @@ func (h *VillageHandler) DeleteVillage(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusBadRequest, "Invalid number")
 		return
 	}
-	village,err:=h.store.Delete(int64(n))
+	village,err:=h.store.Delete(r.Context(),int64(n))
 	if err!=nil{
 		writeRes(w, http.StatusInternalServerError, err)
 	}

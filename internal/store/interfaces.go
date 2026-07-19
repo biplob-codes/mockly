@@ -1,10 +1,13 @@
 package store
+
 import (
+	"context"
+
 	"github.com/biplob-codes/mockly/internal/database/sqlc"
 )
 type VillageStore interface{
-	Create (v sqlc.CreateVillageParams) (sqlc.Village,error)
-	List() ([]sqlc.Village,error)
-	Get(id int64) (sqlc.Village,error)
-	Delete(id int64) (sqlc.Village,error)
+	Create(ctx context.Context, v sqlc.CreateVillageParams) (sqlc.Village,error)
+	List(ctx context.Context, ) ([]sqlc.Village,error)
+	Get(ctx context.Context, id int64) (sqlc.Village,error)
+	Delete(ctx context.Context, id int64) (sqlc.Village,error)
 }
