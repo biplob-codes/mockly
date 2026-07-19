@@ -32,7 +32,8 @@ func (h *CharacterHandler) ListCharacters(w http.ResponseWriter, r *http.Request
 	characters, err := h.store.List(r.Context())
 
 	if err != nil {
-		writeRes(w, http.StatusInternalServerError, "Something went wrong")
+	 	writeRes(w, http.StatusInternalServerError, "Something went wrong")
+		return
 	}
 	writeRes(w, http.StatusOK, characters)
 }
@@ -97,6 +98,7 @@ func (h *CharacterHandler) DeleteCharacter(w http.ResponseWriter, r *http.Reques
 	character, err := h.store.Delete(r.Context(), int64(n))
 	if err != nil {
 		writeRes(w, http.StatusInternalServerError, err)
+		return
 	}
 	writeRes(w, http.StatusOK, character)
 }

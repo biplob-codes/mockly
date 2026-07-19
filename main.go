@@ -29,6 +29,7 @@ func main() {
 	defer db.Close()
 	queries:=sqlc.New(db)
         villageStore=store.CreateDBVillageStore(queries)
+        characterStore=store.CreateDBCharacterStore(queries)
 	}else{
 		villageStore=store.CreateMemoryVillageStore()
 		characterStore=store.CreateMemoryCharacterStore()
