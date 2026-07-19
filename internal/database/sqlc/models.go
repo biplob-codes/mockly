@@ -9,6 +9,19 @@ import (
 	"time"
 )
 
+type Character struct {
+	ID        int64
+	Name      string
+	Nickname  sql.NullString
+	Clan      sql.NullString
+	Age       sql.NullInt64
+	Rank      string
+	Birthdate time.Time
+	VillageID int64
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
 type Village struct {
 	ID          int64
 	Name        string
