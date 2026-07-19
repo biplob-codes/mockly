@@ -38,7 +38,7 @@ func (v *MemoryVillageStore) Get(ctx context.Context,id int64) (sqlc.Village,err
 	}
 	return  sqlc.Village{},fmt.Errorf("Village not found");
 }
-
+// nv!==cv
 func (v *MemoryVillageStore) Create(ctx context.Context,nv sqlc.CreateVillageParams) (sqlc.Village,error){
 	var cv sqlc.Village
 	cv.ID=int64(len(seed.VillageData)+1)

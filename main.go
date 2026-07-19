@@ -17,6 +17,7 @@ import (
 func main() {
 	mux := http.NewServeMux()
 	var villageStore store.VillageStore
+	var characterStore store.CharacterStore
 	cfg:=config.Load()
 	if cfg.Env=="local"{
     db, err := database.Connect(cfg.DatabaseName)
@@ -30,6 +31,7 @@ func main() {
         villageStore=store.CreateDBVillageStore(queries)
 	}else{
 		villageStore=store.CreateMemoryVillageStore()
+		characterStore=store.CreateMemoryCharacterStore()
 	}
 	
  
@@ -37,11 +39,18 @@ func main() {
 	mux.HandleFunc("GET /health", handlers.Health)
    
 	villageHandler:=handlers.NewVillageHandler(villageStore)
+	characterHandler:=handlers.NewCharacterHandler(characterStore)
+
 
     mux.HandleFunc("GET /villages", villageHandler.ListVillages)
 	mux.HandleFunc("GET /villages/{id}", villageHandler.GetVillage)
 	mux.HandleFunc("POST /villages", villageHandler.CreateVillage)
 	mux.HandleFunc("DELETE /villages/{id}", villageHandler.DeleteVillage)
+
+    mux.HandleFunc("GET /characters", characterHandler.ListCharacters)
+	mux.HandleFunc("GET /characters/{id}", characterHandler.GetCharacter)
+	mux.HandleFunc("POST /characters", characterHandler.CreateCharacter)
+	mux.HandleFunc("DELETE /characters/{id}", characterHandler.DeleteCharacter)
 	 
  
 
