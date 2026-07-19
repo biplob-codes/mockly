@@ -17,3 +17,9 @@ type CharacterStore interface{
 	Get(ctx context.Context, id int64) (sqlc.Character,error)
 	Delete(ctx context.Context, id int64) (sqlc.Character,error)
 }
+type JutsuStore interface {
+	Create(ctx context.Context, p sqlc.CreateJutsuParams) (sqlc.Jutsu, error)
+	List(ctx context.Context) ([]sqlc.Jutsu, error)
+	Get(ctx context.Context, id int64) (sqlc.Jutsu, error)
+	Delete(ctx context.Context, id int64) (sqlc.Jutsu, error)
+}
