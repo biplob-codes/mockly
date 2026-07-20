@@ -22,7 +22,7 @@ func NewCharacterJutsuHandler(s store.CharacterJutsuStore) *CharacterJutsuHandle
 }
 
 func (h *CharacterJutsuHandler) CreateCharacterJutsu(w http.ResponseWriter, r *http.Request) {
-	characterIdStr := r.PathValue("characterId")
+	characterIdStr := r.PathValue("id")
 	characterId, err := strconv.Atoi(characterIdStr)
 	if err != nil {
 		writeRes(w, http.StatusBadRequest, "Invalid character id")
@@ -52,6 +52,7 @@ func (h *CharacterJutsuHandler) CreateCharacterJutsu(w http.ResponseWriter, r *h
 
 func (h *CharacterJutsuHandler) ListJutsusByCharacter(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
+
 	n, err := strconv.Atoi(id)
 	if err != nil {
 		writeRes(w, http.StatusBadRequest, "Invalid number")
@@ -67,7 +68,7 @@ func (h *CharacterJutsuHandler) ListJutsusByCharacter(w http.ResponseWriter, r *
 }
 
 func (h *CharacterJutsuHandler) ListCharactersByJutsu(w http.ResponseWriter, r *http.Request) {
-	id := r.PathValue("jutsuId")
+	id := r.PathValue("id")
 	n, err := strconv.Atoi(id)
 	if err != nil {
 		writeRes(w, http.StatusBadRequest, "Invalid number")

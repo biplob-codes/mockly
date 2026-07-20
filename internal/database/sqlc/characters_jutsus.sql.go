@@ -32,7 +32,7 @@ func (q *Queries) CreateCharacterJutsu(ctx context.Context, arg CreateCharacterJ
 	return i, err
 }
 
-const deleteCharacterJutsu = `-- name: DeleteCharacterJutsu :exec
+const deleteCharacterJutsu = `-- name: DeleteCharacterJutsu :one
 DELETE FROM characters_jutsus
 WHERE character_id = ? AND jutsu_id = ?
 RETURNING id, character_id, jutsu_id, created_at
@@ -43,9 +43,16 @@ type DeleteCharacterJutsuParams struct {
 	JutsuID     int64
 }
 
-func (q *Queries) DeleteCharacterJutsu(ctx context.Context, arg DeleteCharacterJutsuParams) error {
-	_, err := q.db.ExecContext(ctx, deleteCharacterJutsu, arg.CharacterID, arg.JutsuID)
-	return err
+func (q *Queries) DeleteCharacterJutsu(ctx context.Context, arg DeleteCharacterJutsuParams) (CharactersJutsu, error) {
+	row := q.db.QueryRowContext(ctx, deleteCharacterJutsu, arg.CharacterID, arg.JutsuID)
+	var i CharactersJutsu
+	err := row.Scan(
+		&i.ID,
+		&i.CharacterID,
+		&i.JutsuID,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const getCharactersByJutsuID = `-- name: GetCharactersByJutsuID :many

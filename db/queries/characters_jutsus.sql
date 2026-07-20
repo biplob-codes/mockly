@@ -3,7 +3,7 @@ INSERT INTO characters_jutsus (character_id, jutsu_id)
 VALUES (?, ?)
 RETURNING *;
 
--- name: DeleteCharacterJutsu :exec
+-- name: DeleteCharacterJutsu :one
 DELETE FROM characters_jutsus
 WHERE character_id = ? AND jutsu_id = ?
 RETURNING *;

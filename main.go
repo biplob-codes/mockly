@@ -33,6 +33,7 @@ func main() {
         villageStore=store.CreateDBVillageStore(queries)
         characterStore=store.CreateDBCharacterStore(queries)
 		jutsuStore=store.CreateDBJutsuStore(queries)
+		characterJutsuStore=store.CreateDBCharacterJutsuStore(queries)
 	}else{
 		villageStore=store.CreateMemoryVillageStore()
 		characterStore=store.CreateMemoryCharacterStore()
@@ -60,7 +61,7 @@ func main() {
 	mux.HandleFunc("GET /characters/{id}/jutsus", characterJutsuHandler.ListJutsusByCharacter)
 	mux.HandleFunc("POST /characters", characterHandler.CreateCharacter)
 	mux.HandleFunc("DELETE /characters/{id}", characterHandler.DeleteCharacter)
-    mux.HandleFunc("POST /characters/{characterId}/jutsus", characterJutsuHandler.CreateCharacterJutsu)
+    mux.HandleFunc("POST /characters/{id}/jutsus", characterJutsuHandler.CreateCharacterJutsu)
     mux.HandleFunc("DELETE /characters/{characterId}/jutsus/{jutsuId}",characterJutsuHandler.DeleteCharacterJutsu)
 
     mux.HandleFunc("GET /jutsus", jutsuHandler.ListJutsus)
@@ -71,9 +72,6 @@ func main() {
 
    
 	
-	
-	 
- 
 
 	addr := ":" + cfg.Port
 	srv := &http.Server{
