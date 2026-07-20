@@ -22,6 +22,13 @@ type Character struct {
 	UpdatedAt time.Time
 }
 
+type CharactersJutsu struct {
+	ID          int64
+	CharacterID int64
+	JutsuID     int64
+	CreatedAt   time.Time
+}
+
 type Jutsu struct {
 	ID          int64
 	Name        string
