@@ -19,6 +19,7 @@ func main() {
 	var villageStore store.VillageStore
 	var characterStore store.CharacterStore
 	var jutsuStore store.JutsuStore
+	var characterJutsuStore store.CharacterJutsuStore
 	cfg:=config.Load()
 	if cfg.Env=="local"{
     db, err := database.Connect(cfg.DatabaseName)
@@ -36,6 +37,7 @@ func main() {
 		villageStore=store.CreateMemoryVillageStore()
 		characterStore=store.CreateMemoryCharacterStore()
 		jutsuStore=store.CreateMemoryJutsuStore()
+		characterJutsuStore=store.CreateMemoryCharacterJutsuStore()
 	}
 	
  
@@ -45,6 +47,7 @@ func main() {
 	villageHandler:=handlers.NewVillageHandler(villageStore)
 	characterHandler:=handlers.NewCharacterHandler(characterStore)
 	jutsuHandler:=handlers.NewJutsuHandler(jutsuStore)
+	characterJutsuHandler:=handlers.NewCharacterJutsuHandler(characterJutsuStore)
 
 
     mux.HandleFunc("GET /villages", villageHandler.ListVillages)
@@ -54,13 +57,21 @@ func main() {
 
     mux.HandleFunc("GET /characters", characterHandler.ListCharacters)
 	mux.HandleFunc("GET /characters/{id}", characterHandler.GetCharacter)
+	mux.HandleFunc("GET /characters/{id}/jutsus", characterJutsuHandler.ListJutsusByCharacter)
 	mux.HandleFunc("POST /characters", characterHandler.CreateCharacter)
 	mux.HandleFunc("DELETE /characters/{id}", characterHandler.DeleteCharacter)
+    mux.HandleFunc("POST /characters/{characterId}/jutsus", characterJutsuHandler.CreateCharacterJutsu)
+    mux.HandleFunc("DELETE /characters/{characterId}/jutsus/{jutsuId}",characterJutsuHandler.DeleteCharacterJutsu)
 
     mux.HandleFunc("GET /jutsus", jutsuHandler.ListJutsus)
 	mux.HandleFunc("GET /jutsus/{id}", jutsuHandler.GetJutsu)
+	mux.HandleFunc("GET /jutsus/{id}/characters", characterJutsuHandler.ListCharactersByJutsu)
 	mux.HandleFunc("POST /jutsus", jutsuHandler.CreateJutsu)
 	mux.HandleFunc("DELETE /jutsus/{id}", jutsuHandler.DeleteJutsu)
+
+   
+	
+	
 	 
  
 
