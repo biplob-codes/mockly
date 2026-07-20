@@ -20,6 +20,7 @@ func main() {
 	var characterStore store.CharacterStore
 	var jutsuStore store.JutsuStore
 	var characterJutsuStore store.CharacterJutsuStore
+	var teamStore store.TeamStore
 	cfg:=config.Load()
 	if cfg.Env=="local"{
     db, err := database.Connect(cfg.DatabaseName)
@@ -39,6 +40,7 @@ func main() {
 		characterStore=store.CreateMemoryCharacterStore()
 		jutsuStore=store.CreateMemoryJutsuStore()
 		characterJutsuStore=store.CreateMemoryCharacterJutsuStore()
+		teamStore=store.CreateMemoryTeamStore()
 	}
 	
  
@@ -49,7 +51,7 @@ func main() {
 	characterHandler:=handlers.NewCharacterHandler(characterStore)
 	jutsuHandler:=handlers.NewJutsuHandler(jutsuStore)
 	characterJutsuHandler:=handlers.NewCharacterJutsuHandler(characterJutsuStore)
-
+    teamHandler:=handlers.NewTeamHandler(teamStore)
 
     mux.HandleFunc("GET /villages", villageHandler.ListVillages)
 	mux.HandleFunc("GET /villages/{id}", villageHandler.GetVillage)
@@ -70,8 +72,11 @@ func main() {
 	mux.HandleFunc("POST /jutsus", jutsuHandler.CreateJutsu)
 	mux.HandleFunc("DELETE /jutsus/{id}", jutsuHandler.DeleteJutsu)
 
-   
-	
+   mux.HandleFunc("GET /teams", teamHandler.ListTeams)
+	mux.HandleFunc("POST /teams", teamHandler.CreateTeam)
+mux.HandleFunc("DELETE /teams/{id}", teamHandler.DeleteTeam)
+mux.HandleFunc("GET /teams/{id}", teamHandler.GetTeam)
+mux.HandleFunc("GET /teams/{id}/members", teamHandler.GetTeamDetails)
 
 	addr := ":" + cfg.Port
 	srv := &http.Server{

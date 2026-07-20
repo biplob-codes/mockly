@@ -29,3 +29,10 @@ type CharacterJutsuStore interface {
 	ListCharactersByJutsu(ctx context.Context, id int64) ([]sqlc.Character, error)
 	Delete(ctx context.Context, characterId,jutsuId int64) (sqlc.CharactersJutsu, error)
 }
+type TeamStore interface {
+	Create(ctx context.Context, p sqlc.CreateTeamParams) (sqlc.Team, error)
+	Delete(ctx context.Context, id int64) (sqlc.Team, error)
+	Get(ctx context.Context, id int64) (sqlc.Team, error)
+	GetMembers(ctx context.Context, teamId int64) ([]sqlc.Character, error)
+	List(ctx context.Context) ([]sqlc.Team, error)
+}
