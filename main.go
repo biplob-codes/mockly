@@ -37,6 +37,7 @@ func main() {
 		jutsuStore=store.CreateDBJutsuStore(queries)
 		characterJutsuStore=store.CreateDBCharacterJutsuStore(queries)
 		teamStore=store.CreateDBTeamStore(queries)
+		missionStore=store.CreateDBMissionStore(queries)
 	}else{
 		villageStore=store.CreateMemoryVillageStore()
 		characterStore=store.CreateMemoryCharacterStore()
