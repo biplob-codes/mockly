@@ -40,6 +40,19 @@ type Jutsu struct {
 	UpdatedAt   time.Time
 }
 
+type Mission struct {
+	ID          int64
+	Name        string
+	Description string
+	AssignedTo  int64
+	Rank        string
+	Status      string
+	Reward      int64
+	StartsAt    time.Time
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
 type Team struct {
 	ID        int64
 	Name      string
