@@ -36,3 +36,10 @@ type TeamStore interface {
 	GetMembers(ctx context.Context, teamId int64) ([]sqlc.Character, error)
 	List(ctx context.Context) ([]sqlc.Team, error)
 }
+type MissionStore interface {
+	Create(ctx context.Context, p sqlc.CreateMissionParams) (sqlc.Mission, error)
+	Get(ctx context.Context, id int64) (sqlc.Mission, error)
+	List(ctx context.Context) ([]sqlc.Mission, error)
+	GetByTeam(ctx context.Context, teamId int64) ([]sqlc.Mission, error)
+	Delete(ctx context.Context, id int64) (sqlc.Mission, error)
+}
