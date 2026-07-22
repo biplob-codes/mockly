@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/biplob-codes/mockly/internal/database/sqlc"
 	"github.com/biplob-codes/mockly/internal/store"
@@ -20,6 +21,31 @@ type createJutsuRequest struct {
 	Rank        string `json:"rank"`
 }
 
+// internal/jutsu/response.go
+type JutsuResponse struct {
+	ID          int64  `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Type        string `json:"type"`
+	Rank        string `json:"rank"`
+	CreatedAt   string `json:"createdAt"`
+	UpdatedAt   string `json:"updatedAt"`
+}
+
+func toJutsuResponse(j sqlc.Jutsu) JutsuResponse {
+	resp := JutsuResponse{
+		ID:        j.ID,
+		Name:      j.Name,
+		Type:      j.Type,
+		Rank:      j.Rank,
+		CreatedAt: j.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: j.UpdatedAt.Format(time.RFC3339),
+	}
+	if j.Description.Valid {
+		resp.Description = j.Description.String
+	}
+	return resp
+}
 func NewJutsuHandler(s store.JutsuStore) *JutsuHandler {
 	return &JutsuHandler{store: s}
 }
@@ -30,7 +56,12 @@ func (h *JutsuHandler) ListJutsus(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusInternalServerError, "Something went wrong")
 		return
 	}
-	writeRes(w, http.StatusOK, jutsus)
+	var jres []JutsuResponse
+	for _, j := range jutsus {
+		res := toJutsuResponse(j)
+		jres = append(jres, res)
+	}
+	writeRes(w, http.StatusOK, jres)
 }
 
 func (h *JutsuHandler) GetJutsu(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +76,7 @@ func (h *JutsuHandler) GetJutsu(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusNotFound, err.Error())
 		return
 	}
-	writeRes(w, http.StatusOK, jutsu)
+	writeRes(w, http.StatusOK, toJutsuResponse(jutsu))
 }
 
 func (h *JutsuHandler) CreateJutsu(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +100,7 @@ func (h *JutsuHandler) CreateJutsu(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeRes(w, http.StatusCreated, newJutsu)
+	writeRes(w, http.StatusCreated, toJutsuResponse(newJutsu))
 }
 
 func (h *JutsuHandler) DeleteJutsu(w http.ResponseWriter, r *http.Request) {
@@ -84,5 +115,5 @@ func (h *JutsuHandler) DeleteJutsu(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusInternalServerError, err)
 		return
 	}
-	writeRes(w, http.StatusOK, jutsu)
+	writeRes(w, http.StatusOK, toJutsuResponse(jutsu))
 }
