@@ -19,9 +19,9 @@ type createVillageRequest struct {
 	Description string `json:"description"`
 	Land        string `json:"land"`
 	Population  int64  `json:"population"`
-	KageID      *int64 `json:"kage_id"`
-	FoundedAt   string `json:"founded_at"`
-} // internal/village/response.go
+	KageID      *int64 `json:"kageId"`
+	FoundedAt   string `json:"foundedAt"`
+}
 type VillageResponse struct {
 	ID          int64  `json:"id"`
 	Name        string `json:"name"`
@@ -30,6 +30,14 @@ type VillageResponse struct {
 	Population  *int64 `json:"population,omitempty"`
 	KageID      *int64 `json:"kageId,omitempty"`
 	FoundedAt   string `json:"foundedAt"`
+}
+type updateVillageRequest struct {
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	Land        *string `json:"land"`
+	Population  *int64  `json:"population"`
+	KageID      *int64  `json:"kageId"`
+	FoundedAt   *string `json:"foundedAt"`
 }
 
 func toVillageResponse(v sqlc.Village) VillageResponse {
@@ -131,4 +139,57 @@ func (h *VillageHandler) DeleteVillage(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusInternalServerError, err)
 	}
 	writeRes(w, http.StatusOK, toVillageResponse(village))
+}
+
+func (h *VillageHandler) UpdateVillage(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		writeRes(w, http.StatusBadRequest, "Invalid village ID")
+		return
+	}
+
+	var req updateVillageRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeRes(w, http.StatusBadRequest, "Invalid JSON")
+		return
+	}
+
+	// Do validation on the req
+
+	villageParams := sqlc.UpdateVillageParams{
+		ID: id,
+	}
+
+	if req.Name != nil {
+		villageParams.Name = sql.NullString{String: *req.Name, Valid: true}
+	}
+	if req.Description != nil {
+		villageParams.Description = sql.NullString{String: *req.Description, Valid: true}
+	}
+	if req.Land != nil {
+		villageParams.Land = sql.NullString{String: *req.Land, Valid: true}
+	}
+	if req.Population != nil {
+		villageParams.Population = sql.NullInt64{Int64: *req.Population, Valid: true}
+	}
+	if req.KageID != nil {
+		villageParams.KageID = sql.NullInt64{Int64: *req.KageID, Valid: true}
+	}
+	if req.FoundedAt != nil {
+		foundedAt, err := time.Parse(time.RFC3339, *req.FoundedAt)
+		if err != nil {
+			writeRes(w, http.StatusBadRequest, "Invalid date")
+			return
+		}
+		villageParams.FoundedAt = sql.NullTime{Time: foundedAt, Valid: true}
+	}
+
+	updatedVillage, err := h.store.Update(r.Context(), villageParams)
+	if err != nil {
+		writeRes(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeRes(w, http.StatusOK, toVillageResponse(updatedVillage))
 }

@@ -128,3 +128,52 @@ func (q *Queries) GetVillages(ctx context.Context) ([]Village, error) {
 	}
 	return items, nil
 }
+
+const updateVillage = `-- name: UpdateVillage :one
+UPDATE villages
+SET
+  name        = COALESCE(?1, name),
+  description = COALESCE(?2, description),
+  land        = COALESCE(?3, land),
+  population  = COALESCE(?4, population),
+  kage_id     = COALESCE(?5, kage_id),
+  founded_at  = COALESCE(?6, founded_at),
+  updated_at  = CURRENT_TIMESTAMP
+WHERE id = ?7
+RETURNING id, name, description, land, population, kage_id, founded_at, created_at, updated_at
+`
+
+type UpdateVillageParams struct {
+	Name        sql.NullString
+	Description sql.NullString
+	Land        sql.NullString
+	Population  sql.NullInt64
+	KageID      sql.NullInt64
+	FoundedAt   sql.NullTime
+	ID          int64
+}
+
+func (q *Queries) UpdateVillage(ctx context.Context, arg UpdateVillageParams) (Village, error) {
+	row := q.db.QueryRowContext(ctx, updateVillage,
+		arg.Name,
+		arg.Description,
+		arg.Land,
+		arg.Population,
+		arg.KageID,
+		arg.FoundedAt,
+		arg.ID,
+	)
+	var i Village
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Land,
+		&i.Population,
+		&i.KageID,
+		&i.FoundedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
