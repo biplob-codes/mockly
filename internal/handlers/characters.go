@@ -14,6 +14,16 @@ import (
 type CharacterHandler struct {
 	store store.CharacterStore
 }
+type CharacterResponse struct {
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	Nickname  string `json:"nickname,omitempty"`
+	Clan      string `json:"clan,omitempty"`
+	Age       *int64 `json:"age,omitempty"`
+	Rank      string `json:"rank"`
+	Birthdate string `json:"birthdate"`
+	VillageID int64  `json:"villageId"`
+}
 type createCharacterRequest struct {
 	Name      string `json:"name"`
 	Nickname  string `json:"nickname"`
@@ -24,6 +34,25 @@ type createCharacterRequest struct {
 	VillageID int64  `json:"village_id"`
 }
 
+func toCharacterResponse(c sqlc.Character) CharacterResponse {
+	resp := CharacterResponse{
+		ID:        c.ID,
+		Name:      c.Name,
+		Rank:      c.Rank,
+		Birthdate: c.Birthdate.Format("2006-01-02"),
+		VillageID: c.VillageID,
+	}
+	if c.Nickname.Valid {
+		resp.Nickname = c.Nickname.String
+	}
+	if c.Clan.Valid {
+		resp.Clan = c.Clan.String
+	}
+	if c.Age.Valid {
+		resp.Age = &c.Age.Int64
+	}
+	return resp
+}
 func NewCharacterHandler(s store.CharacterStore) *CharacterHandler {
 	return &CharacterHandler{store: s}
 }
@@ -32,10 +61,16 @@ func (h *CharacterHandler) ListCharacters(w http.ResponseWriter, r *http.Request
 	characters, err := h.store.List(r.Context())
 
 	if err != nil {
-	 	writeRes(w, http.StatusInternalServerError, "Something went wrong")
+		writeRes(w, http.StatusInternalServerError, "Something went wrong")
 		return
 	}
-	writeRes(w, http.StatusOK, characters)
+	var chres []CharacterResponse
+
+	for _, ch := range characters {
+		res := toCharacterResponse(ch)
+		chres = append(chres, res)
+	}
+	writeRes(w, http.StatusOK, chres)
 }
 
 func (h *CharacterHandler) GetCharacter(w http.ResponseWriter, r *http.Request) {
@@ -51,8 +86,7 @@ func (h *CharacterHandler) GetCharacter(w http.ResponseWriter, r *http.Request) 
 		writeRes(w, http.StatusNotFound, err.Error())
 		return
 	}
-
-	writeRes(w, http.StatusOK, character)
+	writeRes(w, http.StatusOK, toCharacterResponse(character))
 }
 
 func (h *CharacterHandler) CreateCharacter(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +119,7 @@ func (h *CharacterHandler) CreateCharacter(w http.ResponseWriter, r *http.Reques
 		writeRes(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeRes(w, http.StatusCreated, newCharacter)
+	writeRes(w, http.StatusCreated, toCharacterResponse(newCharacter))
 }
 
 func (h *CharacterHandler) DeleteCharacter(w http.ResponseWriter, r *http.Request) {
@@ -100,5 +134,5 @@ func (h *CharacterHandler) DeleteCharacter(w http.ResponseWriter, r *http.Reques
 		writeRes(w, http.StatusInternalServerError, err)
 		return
 	}
-	writeRes(w, http.StatusOK, character)
+	writeRes(w, http.StatusOK, toCharacterResponse(character))
 }
