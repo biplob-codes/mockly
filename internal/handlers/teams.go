@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/biplob-codes/mockly/internal/database/sqlc"
 	"github.com/biplob-codes/mockly/internal/store"
@@ -19,12 +20,28 @@ type createTeamRequest struct {
 }
 
 type teamDetailsResponse struct {
-	ID      int64            `json:"id"`
-	Name    string           `json:"name"`
-	Sensei  sqlc.Character   `json:"sensei"`
-	Members []sqlc.Character `json:"members"`
+	ID      int64               `json:"id"`
+	Name    string              `json:"name"`
+	Sensei  CharacterResponse   `json:"sensei"`
+	Members []CharacterResponse `json:"members"`
 }
 
+// internal/team/response.go
+type TeamResponse struct {
+	ID        int64  `json:"id"`
+	Name      string `json:"name"`
+	SenseiID  int64  `json:"senseiId"`
+	CreatedAt string `json:"createdAt"`
+}
+
+func toTeamResponse(t sqlc.Team) TeamResponse {
+	return TeamResponse{
+		ID:        t.ID,
+		Name:      t.Name,
+		SenseiID:  t.SenseiID,
+		CreatedAt: t.CreatedAt.Format(time.RFC3339),
+	}
+}
 func NewTeamHandler(s store.TeamStore) *TeamHandler {
 	return &TeamHandler{store: s}
 }
@@ -34,7 +51,12 @@ func (h *TeamHandler) ListTeams(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusInternalServerError, "Something went wrong")
 		return
 	}
-	writeRes(w, http.StatusOK, teams)
+	var tres []TeamResponse
+	for _, t := range teams {
+		res := toTeamResponse(t)
+		tres = append(tres, res)
+	}
+	writeRes(w, http.StatusOK, tres)
 }
 func (h *TeamHandler) CreateTeam(w http.ResponseWriter, r *http.Request) {
 	var req createTeamRequest
@@ -55,7 +77,7 @@ func (h *TeamHandler) CreateTeam(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeRes(w, http.StatusCreated, newTeam)
+	writeRes(w, http.StatusCreated, toTeamResponse(newTeam))
 }
 
 func (h *TeamHandler) DeleteTeam(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +93,7 @@ func (h *TeamHandler) DeleteTeam(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeRes(w, http.StatusOK, deleted)
+	writeRes(w, http.StatusOK, toTeamResponse(deleted))
 }
 
 func (h *TeamHandler) GetTeam(w http.ResponseWriter, r *http.Request) {
@@ -87,7 +109,7 @@ func (h *TeamHandler) GetTeam(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusNotFound, "Team not found")
 		return
 	}
-	writeRes(w, http.StatusOK, team)
+	writeRes(w, http.StatusOK, toTeamResponse(team))
 }
 
 func (h *TeamHandler) GetTeamDetails(w http.ResponseWriter, r *http.Request) {
@@ -110,13 +132,14 @@ func (h *TeamHandler) GetTeamDetails(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var sensei sqlc.Character
-	var members []sqlc.Character
+	var sensei CharacterResponse
+	var members []CharacterResponse
 	for _, c := range allMembers {
 		if c.ID == team.SenseiID {
-			sensei = c
+			sensei = toCharacterResponse(c)
 		} else {
-			members = append(members, c)
+			r := toCharacterResponse(c)
+			members = append(members, r)
 		}
 	}
 
