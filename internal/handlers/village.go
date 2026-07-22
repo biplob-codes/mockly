@@ -11,8 +11,7 @@ import (
 	"github.com/biplob-codes/mockly/internal/store"
 )
 
- 
-type VillageHandler struct{
+type VillageHandler struct {
 	store store.VillageStore
 }
 type createVillageRequest struct {
@@ -20,20 +19,53 @@ type createVillageRequest struct {
 	Description string `json:"description"`
 	Land        string `json:"land"`
 	Population  int64  `json:"population"`
-	KageID      *int64 `json:"kage_id"` 
+	KageID      *int64 `json:"kage_id"`
 	FoundedAt   string `json:"founded_at"`
+} // internal/village/response.go
+type VillageResponse struct {
+	ID          int64  `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Land        string `json:"land"`
+	Population  *int64 `json:"population,omitempty"`
+	KageID      *int64 `json:"kageId,omitempty"`
+	FoundedAt   string `json:"foundedAt"`
 }
-func NewVillageHandler(s store.VillageStore) *VillageHandler{
-	return  &VillageHandler{store:s }
+
+func toVillageResponse(v sqlc.Village) VillageResponse {
+	resp := VillageResponse{
+		ID:        v.ID,
+		Name:      v.Name,
+		Land:      v.Land,
+		FoundedAt: v.FoundedAt.Format("2006-01-02"),
+	}
+	if v.Description.Valid {
+		resp.Description = v.Description.String
+	}
+	if v.Population.Valid {
+		resp.Population = &v.Population.Int64
+	}
+	if v.KageID.Valid {
+		resp.KageID = &v.KageID.Int64
+	}
+	return resp
+}
+func NewVillageHandler(s store.VillageStore) *VillageHandler {
+	return &VillageHandler{store: s}
 }
 
 func (h *VillageHandler) ListVillages(w http.ResponseWriter, r *http.Request) {
-	villages,err:=h.store.List(r.Context())
+	villages, err := h.store.List(r.Context())
 
-	if err!=nil{
-		writeRes(w,http.StatusInternalServerError,"Something went wrong")
+	if err != nil {
+		writeRes(w, http.StatusInternalServerError, "Something went wrong")
 	}
-	writeRes(w, http.StatusOK, villages)
+	var vres []VillageResponse
+	for _, vl := range villages {
+		res := toVillageResponse(vl)
+		vres = append(vres, res)
+	}
+	writeRes(w, http.StatusOK, vres)
 }
 
 func (h *VillageHandler) GetVillage(w http.ResponseWriter, r *http.Request) {
@@ -43,14 +75,14 @@ func (h *VillageHandler) GetVillage(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusBadRequest, "Invalid number")
 		return
 	}
-	village,err:=h.store.Get(r.Context(),int64(n))
+	village, err := h.store.Get(r.Context(), int64(n))
 
-	if err!=nil{
-     writeRes(w,http.StatusNotFound,err.Error())
-	 return
+	if err != nil {
+		writeRes(w, http.StatusNotFound, err.Error())
+		return
 	}
 
-	writeRes(w, http.StatusOK, village)
+	writeRes(w, http.StatusOK, toVillageResponse(village))
 }
 
 func (h *VillageHandler) CreateVillage(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +91,7 @@ func (h *VillageHandler) CreateVillage(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusBadRequest, "Invalid JSON")
 		return
 	}
-    foundedAt, err := time.Parse(time.RFC3339, req.FoundedAt)
+	foundedAt, err := time.Parse(time.RFC3339, req.FoundedAt)
 	if err != nil {
 		writeRes(w, http.StatusBadRequest, "Invalid date")
 		return
@@ -75,19 +107,17 @@ func (h *VillageHandler) CreateVillage(w http.ResponseWriter, r *http.Request) {
 		FoundedAt:   foundedAt,
 	}
 
- 
 	if req.KageID != nil {
 		villageParams.KageID = sql.NullInt64{Int64: *req.KageID, Valid: true}
 	}
-	newVillage,err:=h.store.Create(r.Context(),villageParams)
+	newVillage, err := h.store.Create(r.Context(), villageParams)
 
-	if err!=nil{
+	if err != nil {
 		writeRes(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeRes(w, http.StatusCreated, newVillage)
+	writeRes(w, http.StatusCreated, toVillageResponse(newVillage))
 }
-
 
 func (h *VillageHandler) DeleteVillage(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
@@ -96,9 +126,9 @@ func (h *VillageHandler) DeleteVillage(w http.ResponseWriter, r *http.Request) {
 		writeRes(w, http.StatusBadRequest, "Invalid number")
 		return
 	}
-	village,err:=h.store.Delete(r.Context(),int64(n))
-	if err!=nil{
+	village, err := h.store.Delete(r.Context(), int64(n))
+	if err != nil {
 		writeRes(w, http.StatusInternalServerError, err)
 	}
-	writeRes(w, http.StatusOK, village)
+	writeRes(w, http.StatusOK, toVillageResponse(village))
 }
