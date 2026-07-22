@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/biplob-codes/mockly/internal/database/sqlc"
 	"github.com/biplob-codes/mockly/internal/store"
@@ -17,6 +18,22 @@ type createCharacterJutsuRequest struct {
 	JutsuID int64 `json:"jutsu_id"`
 }
 
+// internal/characterjutsu/response.go
+type CharacterJutsuResponse struct {
+	ID          int64  `json:"id"`
+	CharacterID int64  `json:"characterId"`
+	JutsuID     int64  `json:"jutsuId"`
+	CreatedAt   string `json:"createdAt"`
+}
+
+func toCharacterJutsuResponse(cj sqlc.CharactersJutsu) CharacterJutsuResponse {
+	return CharacterJutsuResponse{
+		ID:          cj.ID,
+		CharacterID: cj.CharacterID,
+		JutsuID:     cj.JutsuID,
+		CreatedAt:   cj.CreatedAt.Format(time.RFC3339),
+	}
+}
 func NewCharacterJutsuHandler(s store.CharacterJutsuStore) *CharacterJutsuHandler {
 	return &CharacterJutsuHandler{store: s}
 }
@@ -47,7 +64,7 @@ func (h *CharacterJutsuHandler) CreateCharacterJutsu(w http.ResponseWriter, r *h
 		writeRes(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeRes(w, http.StatusCreated, newCharacterJutsu)
+	writeRes(w, http.StatusCreated, toCharacterJutsuResponse(newCharacterJutsu))
 }
 
 func (h *CharacterJutsuHandler) ListJutsusByCharacter(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +81,12 @@ func (h *CharacterJutsuHandler) ListJutsusByCharacter(w http.ResponseWriter, r *
 		writeRes(w, http.StatusInternalServerError, "Something went wrong")
 		return
 	}
-	writeRes(w, http.StatusOK, jutsus)
+	var jres []JutsuResponse
+	for _, j := range jutsus {
+		res := toJutsuResponse(j)
+		jres = append(jres, res)
+	}
+	writeRes(w, http.StatusOK, jres)
 }
 
 func (h *CharacterJutsuHandler) ListCharactersByJutsu(w http.ResponseWriter, r *http.Request) {
@@ -80,7 +102,13 @@ func (h *CharacterJutsuHandler) ListCharactersByJutsu(w http.ResponseWriter, r *
 		writeRes(w, http.StatusInternalServerError, "Something went wrong")
 		return
 	}
-	writeRes(w, http.StatusOK, characters)
+	var chres []CharacterResponse
+
+	for _, ch := range characters {
+		res := toCharacterResponse(ch)
+		chres = append(chres, res)
+	}
+	writeRes(w, http.StatusOK, chres)
 }
 
 func (h *CharacterJutsuHandler) DeleteCharacterJutsu(w http.ResponseWriter, r *http.Request) {
@@ -103,5 +131,5 @@ func (h *CharacterJutsuHandler) DeleteCharacterJutsu(w http.ResponseWriter, r *h
 		writeRes(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeRes(w, http.StatusOK, deleted)
+	writeRes(w, http.StatusOK, toCharacterJutsuResponse(deleted))
 }
