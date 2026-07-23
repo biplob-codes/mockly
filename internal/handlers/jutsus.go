@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -21,7 +22,13 @@ type createJutsuRequest struct {
 	Rank        string `json:"rank"`
 }
 
-// internal/jutsu/response.go
+type updateJutsuRequest struct {
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	Type        *string `json:"type"`
+	Rank        *string `json:"rank"`
+}
+
 type JutsuResponse struct {
 	ID          int64  `json:"id"`
 	Name        string `json:"name"`
@@ -116,4 +123,50 @@ func (h *JutsuHandler) DeleteJutsu(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeRes(w, http.StatusOK, toJutsuResponse(jutsu))
+}
+
+func (h *JutsuHandler) UpdateJutsu(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		writeRes(w, http.StatusBadRequest, "Invalid jutsu ID")
+		return
+	}
+
+	var req updateJutsuRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeRes(w, http.StatusBadRequest, "Invalid JSON")
+		return
+	}
+
+	// Do validation on the req
+
+	jutsuParams := sqlc.UpdateJutsuParams{
+		ID: id,
+	}
+
+	if req.Name != nil {
+		jutsuParams.Name = sql.NullString{String: *req.Name, Valid: true}
+	}
+	if req.Description != nil {
+		jutsuParams.Description = sql.NullString{String: *req.Description, Valid: true}
+	}
+	if req.Type != nil {
+		jutsuParams.Type = sql.NullString{String: *req.Type, Valid: true}
+	}
+	if req.Rank != nil {
+		jutsuParams.Rank = sql.NullString{String: *req.Rank, Valid: true}
+	}
+
+	updatedJutsu, err := h.store.Update(r.Context(), jutsuParams)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			writeRes(w, http.StatusNotFound, "Jutsu not found")
+			return
+		}
+		writeRes(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeRes(w, http.StatusOK, toJutsuResponse(updatedJutsu))
 }

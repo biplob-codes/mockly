@@ -2,14 +2,13 @@ package store
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
 	"github.com/biplob-codes/mockly/internal/database/sqlc"
 	"github.com/biplob-codes/mockly/internal/seed"
 )
-
-
 
 type MemoryJutsuStore struct {
 	jutsus []sqlc.Jutsu
@@ -59,4 +58,37 @@ func (s *MemoryJutsuStore) Delete(ctx context.Context, id int64) (sqlc.Jutsu, er
 		return sqlc.Jutsu{}, fmt.Errorf("Jutsu not found")
 	}
 	return jutsu, nil
+}
+func (s *MemoryJutsuStore) Update(ctx context.Context, uj sqlc.UpdateJutsuParams) (sqlc.Jutsu, error) {
+	var existing sqlc.Jutsu
+	found := false
+
+	for _, j := range s.jutsus {
+		if j.ID == uj.ID {
+			existing = j
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return sqlc.Jutsu{}, sql.ErrNoRows
+	}
+
+	if uj.Name.Valid {
+		existing.Name = uj.Name.String
+	}
+	if uj.Description.Valid {
+		existing.Description = uj.Description
+	}
+	if uj.Type.Valid {
+		existing.Type = uj.Type.String
+	}
+	if uj.Rank.Valid {
+		existing.Rank = uj.Rank.String
+	}
+
+	existing.UpdatedAt = time.Now()
+
+	return existing, nil
 }

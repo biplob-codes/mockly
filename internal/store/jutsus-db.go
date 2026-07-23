@@ -43,3 +43,11 @@ func (j *DBJutsuStore) Delete(ctx context.Context, id int64) (sqlc.Jutsu, error)
 	}
 	return jutsu, nil
 }
+
+func (j *DBJutsuStore) Update(ctx context.Context, p sqlc.UpdateJutsuParams) (sqlc.Jutsu, error) {
+	jutsu, err := j.db.UpdateJutsu(ctx, p)
+	if err != nil {
+		return sqlc.Jutsu{}, fmt.Errorf("Something went wrong")
+	}
+	return jutsu, nil
+}

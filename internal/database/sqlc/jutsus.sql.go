@@ -115,3 +115,44 @@ func (q *Queries) GetJutsus(ctx context.Context) ([]Jutsu, error) {
 	}
 	return items, nil
 }
+
+const updateJutsu = `-- name: UpdateJutsu :one
+UPDATE jutsus
+SET
+  name        = COALESCE(?1, name),
+  description = COALESCE(?2, description),
+  type        = COALESCE(?3, type),
+  rank        = COALESCE(?4, rank),
+  updated_at  = CURRENT_TIMESTAMP
+WHERE id = ?5
+RETURNING id, name, description, type, rank, created_at, updated_at
+`
+
+type UpdateJutsuParams struct {
+	Name        sql.NullString
+	Description sql.NullString
+	Type        sql.NullString
+	Rank        sql.NullString
+	ID          int64
+}
+
+func (q *Queries) UpdateJutsu(ctx context.Context, arg UpdateJutsuParams) (Jutsu, error) {
+	row := q.db.QueryRowContext(ctx, updateJutsu,
+		arg.Name,
+		arg.Description,
+		arg.Type,
+		arg.Rank,
+		arg.ID,
+	)
+	var i Jutsu
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.Type,
+		&i.Rank,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

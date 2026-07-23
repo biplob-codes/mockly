@@ -77,6 +77,7 @@ func main() {
 	mux.HandleFunc("GET /jutsus/{id}/characters", characterJutsuHandler.ListCharactersByJutsu)
 	mux.HandleFunc("POST /jutsus", jutsuHandler.CreateJutsu)
 	mux.HandleFunc("DELETE /jutsus/{id}", jutsuHandler.DeleteJutsu)
+	mux.HandleFunc("PATCH /jutsus/{id}", jutsuHandler.UpdateJutsu)
 
 	mux.HandleFunc("GET /teams", teamHandler.ListTeams)
 	mux.HandleFunc("POST /teams", teamHandler.CreateTeam)
