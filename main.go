@@ -43,7 +43,7 @@ func main() {
 		characterStore = store.CreateMemoryCharacterStore()
 		jutsuStore = store.CreateMemoryJutsuStore()
 		characterJutsuStore = store.CreateMemoryCharacterJutsuStore()
-		// teamStore = store.CreateMemoryTeamStore()
+		teamStore = store.CreateMemoryTeamStore()
 		missionStore = store.CreateMemoryMissionStore()
 	}
 
