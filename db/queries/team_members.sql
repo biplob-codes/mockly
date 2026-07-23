@@ -28,3 +28,6 @@ RETURNING *;
 DELETE FROM team_members
 WHERE team_id = ? AND character_id = ?
 RETURNING *;
+
+-- name: CharacterTeamCount :one
+SELECT COUNT(*) FROM team_members WHERE character_id = ?;

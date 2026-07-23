@@ -22,3 +22,4 @@ RETURNING *;
 DELETE FROM teams
 WHERE id = ?
 RETURNING *;
+

@@ -17,7 +17,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1997, 10, 10, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -30,7 +30,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1997, 7, 23, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -43,7 +43,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1997, 3, 28, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -56,7 +56,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1990, 9, 15, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -69,7 +69,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -82,7 +82,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1997, 9, 22, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -95,7 +95,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Chunin",
 		Birthdate: time.Date(1997, 12, 27, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -108,7 +108,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Sannin",
 		Birthdate: time.Date(1954, 11, 11, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -121,7 +121,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1957, 8, 2, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -134,7 +134,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1979, 1, 25, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -147,7 +147,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1929, 4, 8, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -160,7 +160,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1988, 6, 9, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -173,7 +173,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1972, 8, 10, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -186,7 +186,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Sannin",
 		Birthdate: time.Date(1954, 10, 27, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -199,7 +199,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1970, 2, 10, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -212,7 +212,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1, 12, 24, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -225,7 +225,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1, 10, 23, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -238,7 +238,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1, 2, 19, 0, 0, 0, 0, time.UTC),
 		VillageID: 1,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -251,7 +251,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1999, 1, 19, 0, 0, 0, 0, time.UTC),
 		VillageID: 2,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -264,7 +264,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1980, 9, 8, 0, 0, 0, 0, time.UTC),
 		VillageID: 2,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -277,7 +277,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1970, 11, 18, 0, 0, 0, 0, time.UTC),
 		VillageID: 3,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -290,7 +290,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1970, 2, 18, 0, 0, 0, 0, time.UTC),
 		VillageID: 3,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -303,7 +303,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1, 2, 1, 0, 0, 0, 0, time.UTC),
 		VillageID: 4,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -316,7 +316,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1970, 7, 2, 0, 0, 0, 0, time.UTC),
 		VillageID: 5,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -329,7 +329,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1, 12, 30, 0, 0, 0, 0, time.UTC),
 		VillageID: 5,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -342,7 +342,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Kage",
 		Birthdate: time.Date(1985, 9, 19, 0, 0, 0, 0, time.UTC),
 		VillageID: 6,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},
@@ -355,7 +355,7 @@ var CharacterData = []sqlc.Character{
 		Rank:      "Jonin",
 		Birthdate: time.Date(1985, 8, 24, 0, 0, 0, 0, time.UTC),
 		VillageID: 6,
-		TeamID:    sql.NullInt64{Valid: false},
+
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	},

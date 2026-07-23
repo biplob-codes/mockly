@@ -36,14 +36,14 @@ func main() {
 		characterStore = store.CreateDBCharacterStore(queries)
 		jutsuStore = store.CreateDBJutsuStore(queries)
 		characterJutsuStore = store.CreateDBCharacterJutsuStore(queries)
-		teamStore = store.CreateDBTeamStore(queries)
+		teamStore = store.CreateDBTeamStore(db, queries)
 		missionStore = store.CreateDBMissionStore(queries)
 	} else {
 		villageStore = store.CreateMemoryVillageStore()
 		characterStore = store.CreateMemoryCharacterStore()
 		jutsuStore = store.CreateMemoryJutsuStore()
 		characterJutsuStore = store.CreateMemoryCharacterJutsuStore()
-		teamStore = store.CreateMemoryTeamStore()
+		// teamStore = store.CreateMemoryTeamStore()
 		missionStore = store.CreateMemoryMissionStore()
 	}
 
@@ -54,7 +54,7 @@ func main() {
 	characterHandler := handlers.NewCharacterHandler(characterStore)
 	jutsuHandler := handlers.NewJutsuHandler(jutsuStore)
 	characterJutsuHandler := handlers.NewCharacterJutsuHandler(characterJutsuStore)
-	teamHandler := handlers.NewTeamHandler(teamStore)
+	teamHandler := handlers.NewTeamHandler(teamStore, characterStore)
 	missionHandler := handlers.NewMissionHandler(missionStore)
 
 	mux.HandleFunc("GET /villages", villageHandler.ListVillages)
@@ -82,8 +82,11 @@ func main() {
 	mux.HandleFunc("GET /teams", teamHandler.ListTeams)
 	mux.HandleFunc("POST /teams", teamHandler.CreateTeam)
 	mux.HandleFunc("DELETE /teams/{id}", teamHandler.DeleteTeam)
+	mux.HandleFunc("PATCH /teams/{id}", teamHandler.UpdateTeam)
 	mux.HandleFunc("GET /teams/{id}", teamHandler.GetTeam)
-	mux.HandleFunc("GET /teams/{id}/members", teamHandler.GetTeamDetails)
+	mux.HandleFunc("POST /teams/{id}/members", teamHandler.AddTeamMember)
+	mux.HandleFunc("DELETE /teams/{id}/members/{characterId}", teamHandler.RemoveTeamMember)
+	mux.HandleFunc("GET /teams/{id}/details", teamHandler.GetTeamDetails)
 
 	mux.HandleFunc("POST /missions", missionHandler.CreateMission)
 	mux.HandleFunc("GET /missions/{id}", missionHandler.GetMission)

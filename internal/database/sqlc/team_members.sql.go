@@ -35,6 +35,17 @@ func (q *Queries) AddTeamMember(ctx context.Context, arg AddTeamMemberParams) (T
 	return i, err
 }
 
+const characterTeamCount = `-- name: CharacterTeamCount :one
+SELECT COUNT(*) FROM team_members WHERE character_id = ?
+`
+
+func (q *Queries) CharacterTeamCount(ctx context.Context, characterID int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, characterTeamCount, characterID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getCharacterMembership = `-- name: GetCharacterMembership :one
 SELECT team_id, character_id, role, joined_at FROM team_members
 WHERE character_id = ?

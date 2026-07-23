@@ -105,7 +105,7 @@ func (h *CharacterHandler) CreateCharacter(w http.ResponseWriter, r *http.Reques
 		writeRes(w, http.StatusBadRequest, "Invalid JSON")
 		return
 	}
-	birthdate, err := time.Parse(time.RFC3339, req.Birthdate)
+	birthdate, err := time.Parse("2006-01-02", req.Birthdate)
 	if err != nil {
 		writeRes(w, http.StatusBadRequest, "Invalid date")
 		return

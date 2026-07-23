@@ -34,11 +34,16 @@ type CharacterJutsuStore interface {
 	Delete(ctx context.Context, characterId, jutsuId int64) (sqlc.CharactersJutsu, error)
 }
 type TeamStore interface {
-	Create(ctx context.Context, p sqlc.CreateTeamParams) (sqlc.Team, error)
+	Create(ctx context.Context, name string, senseiID int64) (sqlc.Team, error)
 	Delete(ctx context.Context, id int64) (sqlc.Team, error)
 	Get(ctx context.Context, id int64) (sqlc.Team, error)
-	GetMembers(ctx context.Context, teamId int64) ([]sqlc.Character, error)
+	GetDetails(ctx context.Context, id int64) ([]sqlc.GetTeamDetailsRow, error)
 	List(ctx context.Context) ([]sqlc.Team, error)
+	Update(ctx context.Context, p sqlc.UpdateTeamParams) (sqlc.Team, error)
+	AddMember(ctx context.Context, p sqlc.AddTeamMemberParams) (sqlc.TeamMember, error)
+	RemoveMember(ctx context.Context, p sqlc.RemoveTeamMemberParams) (sqlc.TeamMember, error)
+	GetCharacterMembership(ctx context.Context, characterID int64) (sqlc.TeamMember, error)
+	GetTeamSensei(ctx context.Context, teamID int64) (sqlc.TeamMember, error)
 }
 type MissionStore interface {
 	Create(ctx context.Context, p sqlc.CreateMissionParams) (sqlc.Mission, error)
