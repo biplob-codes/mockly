@@ -7,16 +7,8 @@ import (
 )
 
 var TeamData = []sqlc.Team{
-	{
-		ID:   1,
-		Name: "Team Naruto",
-
-		CreatedAt: time.Now(),
-	},
-	{
-		ID:   2,
-		Name: "Team Gaara",
-
-		CreatedAt: time.Now(),
-	},
+	{ID: 1, Name: "Squad Seven", CreatedAt: time.Now()},
+	{ID: 2, Name: "The Yellow Flash Corps", CreatedAt: time.Now()},
+	{ID: 3, Name: "The Toad Sage's Disciples", CreatedAt: time.Now()},
+	{ID: 4, Name: "The Legendary Sannin", CreatedAt: time.Now()},
 }
