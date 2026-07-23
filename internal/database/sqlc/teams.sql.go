@@ -7,109 +7,49 @@ package sqlc
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createTeam = `-- name: CreateTeam :one
-INSERT INTO teams (name, sensei_id)
-VALUES (?, ?)
-RETURNING id, name, sensei_id, created_at
+INSERT INTO teams (name)
+VALUES (?)
+RETURNING id, name, created_at
 `
 
-type CreateTeamParams struct {
-	Name     string
-	SenseiID int64
-}
-
-func (q *Queries) CreateTeam(ctx context.Context, arg CreateTeamParams) (Team, error) {
-	row := q.db.QueryRowContext(ctx, createTeam, arg.Name, arg.SenseiID)
+func (q *Queries) CreateTeam(ctx context.Context, name string) (Team, error) {
+	row := q.db.QueryRowContext(ctx, createTeam, name)
 	var i Team
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.SenseiID,
-		&i.CreatedAt,
-	)
+	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
 	return i, err
 }
 
 const deleteTeam = `-- name: DeleteTeam :one
 DELETE FROM teams
 WHERE id = ?
-RETURNING id, name, sensei_id, created_at
+RETURNING id, name, created_at
 `
 
 func (q *Queries) DeleteTeam(ctx context.Context, id int64) (Team, error) {
 	row := q.db.QueryRowContext(ctx, deleteTeam, id)
 	var i Team
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.SenseiID,
-		&i.CreatedAt,
-	)
+	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
 	return i, err
 }
 
 const getTeam = `-- name: GetTeam :one
-SELECT id, name, sensei_id, created_at FROM teams
+SELECT id, name, created_at FROM teams
 WHERE id = ?
 `
 
 func (q *Queries) GetTeam(ctx context.Context, id int64) (Team, error) {
 	row := q.db.QueryRowContext(ctx, getTeam, id)
 	var i Team
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.SenseiID,
-		&i.CreatedAt,
-	)
+	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
 	return i, err
 }
 
-const getTeamMembers = `-- name: GetTeamMembers :many
-SELECT id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at, team_id FROM characters
-WHERE team_id = ?
-`
-
-func (q *Queries) GetTeamMembers(ctx context.Context, teamID sql.NullInt64) ([]Character, error) {
-	rows, err := q.db.QueryContext(ctx, getTeamMembers, teamID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Character
-	for rows.Next() {
-		var i Character
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Nickname,
-			&i.Clan,
-			&i.Age,
-			&i.Rank,
-			&i.Birthdate,
-			&i.VillageID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.TeamID,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const listTeams = `-- name: ListTeams :many
-SELECT id, name, sensei_id, created_at FROM teams
+SELECT id, name, created_at FROM teams
+ORDER BY id
 `
 
 func (q *Queries) ListTeams(ctx context.Context) ([]Team, error) {
@@ -121,12 +61,7 @@ func (q *Queries) ListTeams(ctx context.Context) ([]Team, error) {
 	var items []Team
 	for rows.Next() {
 		var i Team
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.SenseiID,
-			&i.CreatedAt,
-		); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.CreatedAt); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -138,4 +73,23 @@ func (q *Queries) ListTeams(ctx context.Context) ([]Team, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateTeam = `-- name: UpdateTeam :one
+UPDATE teams
+SET name = ?
+WHERE id = ?
+RETURNING id, name, created_at
+`
+
+type UpdateTeamParams struct {
+	Name string
+	ID   int64
+}
+
+func (q *Queries) UpdateTeam(ctx context.Context, arg UpdateTeamParams) (Team, error) {
+	row := q.db.QueryRowContext(ctx, updateTeam, arg.Name, arg.ID)
+	var i Team
+	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
+	return i, err
 }

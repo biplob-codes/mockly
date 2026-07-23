@@ -20,7 +20,6 @@ type Character struct {
 	VillageID int64
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	TeamID    sql.NullInt64
 }
 
 type CharactersJutsu struct {
@@ -56,8 +55,14 @@ type Mission struct {
 type Team struct {
 	ID        int64
 	Name      string
-	SenseiID  int64
 	CreatedAt time.Time
+}
+
+type TeamMember struct {
+	TeamID      int64
+	CharacterID int64
+	Role        string
+	JoinedAt    time.Time
 }
 
 type Village struct {

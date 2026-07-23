@@ -14,7 +14,7 @@ import (
 const createCharacter = `-- name: CreateCharacter :one
 INSERT INTO characters (name, nickname, clan, age, rank, birthdate, village_id)
 VALUES (?, ?, ?, ?, ?, ?, ?)
-RETURNING id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at, team_id
+RETURNING id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at
 `
 
 type CreateCharacterParams struct {
@@ -49,13 +49,12 @@ func (q *Queries) CreateCharacter(ctx context.Context, arg CreateCharacterParams
 		&i.VillageID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.TeamID,
 	)
 	return i, err
 }
 
 const deleteCharacter = `-- name: DeleteCharacter :one
-DELETE FROM characters WHERE id = ? RETURNING id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at, team_id
+DELETE FROM characters WHERE id = ? RETURNING id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at
 `
 
 func (q *Queries) DeleteCharacter(ctx context.Context, id int64) (Character, error) {
@@ -72,13 +71,12 @@ func (q *Queries) DeleteCharacter(ctx context.Context, id int64) (Character, err
 		&i.VillageID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.TeamID,
 	)
 	return i, err
 }
 
 const getCharacter = `-- name: GetCharacter :one
-SELECT id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at, team_id FROM characters WHERE id = ?
+SELECT id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at FROM characters WHERE id = ?
 `
 
 func (q *Queries) GetCharacter(ctx context.Context, id int64) (Character, error) {
@@ -95,13 +93,12 @@ func (q *Queries) GetCharacter(ctx context.Context, id int64) (Character, error)
 		&i.VillageID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.TeamID,
 	)
 	return i, err
 }
 
 const getCharacters = `-- name: GetCharacters :many
-SELECT id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at, team_id FROM characters
+SELECT id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at FROM characters
 `
 
 func (q *Queries) GetCharacters(ctx context.Context) ([]Character, error) {
@@ -124,7 +121,6 @@ func (q *Queries) GetCharacters(ctx context.Context) ([]Character, error) {
 			&i.VillageID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.TeamID,
 		); err != nil {
 			return nil, err
 		}
@@ -151,7 +147,7 @@ SET
   village_id = COALESCE(?7, village_id),
   updated_at = CURRENT_TIMESTAMP
 WHERE id = ?8
-RETURNING id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at, team_id
+RETURNING id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at
 `
 
 type UpdateCharacterParams struct {
@@ -188,7 +184,6 @@ func (q *Queries) UpdateCharacter(ctx context.Context, arg UpdateCharacterParams
 		&i.VillageID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.TeamID,
 	)
 	return i, err
 }

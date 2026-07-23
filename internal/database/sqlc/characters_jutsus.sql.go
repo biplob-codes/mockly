@@ -56,7 +56,7 @@ func (q *Queries) DeleteCharacterJutsu(ctx context.Context, arg DeleteCharacterJ
 }
 
 const getCharactersByJutsuID = `-- name: GetCharactersByJutsuID :many
-SELECT characters.id, characters.name, characters.nickname, characters.clan, characters.age, characters.rank, characters.birthdate, characters.village_id, characters.created_at, characters.updated_at, characters.team_id
+SELECT characters.id, characters.name, characters.nickname, characters.clan, characters.age, characters.rank, characters.birthdate, characters.village_id, characters.created_at, characters.updated_at
 FROM characters
 JOIN characters_jutsus ON characters_jutsus.character_id = characters.id
 WHERE characters_jutsus.jutsu_id = ?
@@ -82,7 +82,6 @@ func (q *Queries) GetCharactersByJutsuID(ctx context.Context, jutsuID int64) ([]
 			&i.VillageID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.TeamID,
 		); err != nil {
 			return nil, err
 		}
