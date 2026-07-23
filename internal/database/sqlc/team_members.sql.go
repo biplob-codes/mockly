@@ -35,12 +35,12 @@ func (q *Queries) AddTeamMember(ctx context.Context, arg AddTeamMemberParams) (T
 	return i, err
 }
 
-const characterTeamCount = `-- name: CharacterTeamCount :one
-SELECT COUNT(*) FROM team_members WHERE character_id = ?
+const characterIsSenseiOfAnyTeam = `-- name: CharacterIsSenseiOfAnyTeam :one
+SELECT COUNT(*) FROM team_members WHERE character_id = ? AND role = 'Sensei'
 `
 
-func (q *Queries) CharacterTeamCount(ctx context.Context, characterID int64) (int64, error) {
-	row := q.db.QueryRowContext(ctx, characterTeamCount, characterID)
+func (q *Queries) CharacterIsSenseiOfAnyTeam(ctx context.Context, characterID int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, characterIsSenseiOfAnyTeam, characterID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -136,7 +136,7 @@ func (q *Queries) GetTeamDetails(ctx context.Context, id int64) ([]GetTeamDetail
 
 const getTeamSensei = `-- name: GetTeamSensei :one
 SELECT team_id, character_id, role, joined_at FROM team_members
-WHERE team_id = ? AND role = 'sensei'
+WHERE team_id = ? AND role = 'Sensei'
 `
 
 func (q *Queries) GetTeamSensei(ctx context.Context, teamID int64) (TeamMember, error) {

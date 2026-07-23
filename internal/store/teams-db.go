@@ -26,12 +26,12 @@ func (s *DBTeamStore) Create(ctx context.Context, name string, senseiID int64) (
 
 	qtx := s.q.WithTx(tx)
 
-	count, err := qtx.CharacterTeamCount(ctx, senseiID)
+	count, err := qtx.CharacterIsSenseiOfAnyTeam(ctx, senseiID)
 	if err != nil {
 		return sqlc.Team{}, err
 	}
 	if count > 0 {
-		return sqlc.Team{}, fmt.Errorf("Already a member of some team")
+		return sqlc.Team{}, fmt.Errorf("Character is already a sensei")
 	}
 
 	team, err := qtx.CreateTeam(ctx, name)

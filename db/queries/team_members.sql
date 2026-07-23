@@ -17,7 +17,7 @@ WHERE character_id = ?;
 
 -- name: GetTeamSensei :one
 SELECT * FROM team_members
-WHERE team_id = ? AND role = 'sensei';
+WHERE team_id = ? AND role = 'Sensei';
 
 -- name: AddTeamMember :one
 INSERT INTO team_members (team_id, character_id, role)
@@ -29,5 +29,5 @@ DELETE FROM team_members
 WHERE team_id = ? AND character_id = ?
 RETURNING *;
 
--- name: CharacterTeamCount :one
-SELECT COUNT(*) FROM team_members WHERE character_id = ?;
+-- name: CharacterIsSenseiOfAnyTeam :one
+SELECT COUNT(*) FROM team_members WHERE character_id = ? AND role = 'Sensei';
