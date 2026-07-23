@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -60,4 +61,46 @@ func (s *MemoryCharacterStore) Delete(ctx context.Context, id int64) (sqlc.Chara
 		return sqlc.Character{}, fmt.Errorf("Character not found")
 	}
 	return character, nil
+}
+func (s *MemoryCharacterStore) Update(ctx context.Context, uc sqlc.UpdateCharacterParams) (sqlc.Character, error) {
+	var existing sqlc.Character
+	found := false
+
+	for _, ch := range s.characters {
+		if ch.ID == uc.ID {
+			existing = ch
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return sqlc.Character{}, sql.ErrNoRows
+	}
+
+	if uc.Name.Valid {
+		existing.Name = uc.Name.String
+	}
+	if uc.Nickname.Valid {
+		existing.Nickname = uc.Nickname
+	}
+	if uc.Clan.Valid {
+		existing.Clan = uc.Clan
+	}
+	if uc.Age.Valid {
+		existing.Age = uc.Age
+	}
+	if uc.Rank.Valid {
+		existing.Rank = uc.Rank.String
+	}
+	if uc.Birthdate.Valid {
+		existing.Birthdate = uc.Birthdate.Time
+	}
+	if uc.VillageID.Valid {
+		existing.VillageID = uc.VillageID.Int64
+	}
+
+	existing.UpdatedAt = time.Now()
+
+	return existing, nil
 }

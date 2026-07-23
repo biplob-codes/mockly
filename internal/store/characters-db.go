@@ -43,3 +43,10 @@ func (c *DBCharacterStore) Delete(ctx context.Context, id int64) (sqlc.Character
 	}
 	return character, nil
 }
+func (c *DBCharacterStore) Update(ctx context.Context, p sqlc.UpdateCharacterParams) (sqlc.Character, error) {
+	character, err := c.db.UpdateCharacter(ctx, p)
+	if err != nil {
+		return sqlc.Character{}, fmt.Errorf("Something went wrong")
+	}
+	return character, nil
+}

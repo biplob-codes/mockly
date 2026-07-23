@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -31,7 +32,16 @@ type createCharacterRequest struct {
 	Age       int64  `json:"age"`
 	Rank      string `json:"rank"`
 	Birthdate string `json:"birthdate"`
-	VillageID int64  `json:"village_id"`
+	VillageID int64  `json:"villageId"`
+}
+type updateCharacterRequest struct {
+	Name      *string `json:"name"`
+	Nickname  *string `json:"nickname"`
+	Clan      *string `json:"clan"`
+	Age       *int64  `json:"age"`
+	Rank      *string `json:"rank"`
+	Birthdate *string `json:"birthdate"`
+	VillageID *int64  `json:"villageId"`
 }
 
 func toCharacterResponse(c sqlc.Character) CharacterResponse {
@@ -135,4 +145,64 @@ func (h *CharacterHandler) DeleteCharacter(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	writeRes(w, http.StatusOK, toCharacterResponse(character))
+}
+
+func (h *CharacterHandler) UpdateCharacter(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		writeRes(w, http.StatusBadRequest, "Invalid character ID")
+		return
+	}
+
+	var req updateCharacterRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeRes(w, http.StatusBadRequest, "Invalid JSON")
+		return
+	}
+
+	// Do validation on the req
+
+	characterParams := sqlc.UpdateCharacterParams{
+		ID: id,
+	}
+
+	if req.Name != nil {
+		characterParams.Name = sql.NullString{String: *req.Name, Valid: true}
+	}
+	if req.Nickname != nil {
+		characterParams.Nickname = sql.NullString{String: *req.Nickname, Valid: true}
+	}
+	if req.Clan != nil {
+		characterParams.Clan = sql.NullString{String: *req.Clan, Valid: true}
+	}
+	if req.Age != nil {
+		characterParams.Age = sql.NullInt64{Int64: *req.Age, Valid: true}
+	}
+	if req.Rank != nil {
+		characterParams.Rank = sql.NullString{String: *req.Rank, Valid: true}
+	}
+	if req.VillageID != nil {
+		characterParams.VillageID = sql.NullInt64{Int64: *req.VillageID, Valid: true}
+	}
+	if req.Birthdate != nil {
+		birthdate, err := time.Parse(time.RFC3339, *req.Birthdate)
+		if err != nil {
+			writeRes(w, http.StatusBadRequest, "Invalid date")
+			return
+		}
+		characterParams.Birthdate = sql.NullTime{Time: birthdate, Valid: true}
+	}
+
+	updatedCharacter, err := h.store.Update(r.Context(), characterParams)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			writeRes(w, http.StatusNotFound, "Character not found")
+			return
+		}
+		writeRes(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeRes(w, http.StatusOK, toCharacterResponse(updatedCharacter))
 }

@@ -138,3 +138,57 @@ func (q *Queries) GetCharacters(ctx context.Context) ([]Character, error) {
 	}
 	return items, nil
 }
+
+const updateCharacter = `-- name: UpdateCharacter :one
+UPDATE characters
+SET
+  name       = COALESCE(?1, name),
+  nickname   = COALESCE(?2, nickname),
+  clan       = COALESCE(?3, clan),
+  age        = COALESCE(?4, age),
+  rank       = COALESCE(?5, rank),
+  birthdate  = COALESCE(?6, birthdate),
+  village_id = COALESCE(?7, village_id),
+  updated_at = CURRENT_TIMESTAMP
+WHERE id = ?8
+RETURNING id, name, nickname, clan, age, rank, birthdate, village_id, created_at, updated_at, team_id
+`
+
+type UpdateCharacterParams struct {
+	Name      sql.NullString
+	Nickname  sql.NullString
+	Clan      sql.NullString
+	Age       sql.NullInt64
+	Rank      sql.NullString
+	Birthdate sql.NullTime
+	VillageID sql.NullInt64
+	ID        int64
+}
+
+func (q *Queries) UpdateCharacter(ctx context.Context, arg UpdateCharacterParams) (Character, error) {
+	row := q.db.QueryRowContext(ctx, updateCharacter,
+		arg.Name,
+		arg.Nickname,
+		arg.Clan,
+		arg.Age,
+		arg.Rank,
+		arg.Birthdate,
+		arg.VillageID,
+		arg.ID,
+	)
+	var i Character
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Nickname,
+		&i.Clan,
+		&i.Age,
+		&i.Rank,
+		&i.Birthdate,
+		&i.VillageID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.TeamID,
+	)
+	return i, err
+}
